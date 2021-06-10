@@ -1,0 +1,7 @@
+version: '3.8'
+services:
+  bot:
+    build: .
+    command: bash -c "python main.py"
+    ports:
+    - "8001:8001"
