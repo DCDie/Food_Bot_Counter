@@ -15,6 +15,14 @@ def menu(status, message):
     button11 = types.KeyboardButton(text="Параметры 🔬")
     button12 = types.KeyboardButton(text="Женский 👩🏼")
     button13 = types.KeyboardButton(text="Мужской 👨🏻‍")
+    button14 = types.KeyboardButton(text="50")
+    button15 = types.KeyboardButton(text="100")
+    button16 = types.KeyboardButton(text="150")
+    button17 = types.KeyboardButton(text="200")
+    button18 = types.KeyboardButton(text="250")
+    button19 = types.KeyboardButton(text="300")
+    button20 = types.KeyboardButton(text="400")
+    button21 = types.KeyboardButton(text="500")
     if status == 'main':
         keyboards.row(button1, button2)
         keyboards.row(button4)
@@ -37,6 +45,11 @@ def menu(status, message):
     elif status == 'sex':
         keyboards.row(button12)
         keyboards.row(button13)
+    elif status == 'masa':
+        keyboards.row(button14, button15)
+        keyboards.row(button16, button17)
+        keyboards.row(button18, button19)
+        keyboards.row(button20, button21)
     return keyboards
 
 

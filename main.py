@@ -108,7 +108,7 @@ def item_view(query):
     food = session.query(Food).where(Food.id == food_id)
     for i in food:
         sent = bot.send_message(chat_id=query.from_user.id,
-                                text=f'Введите вес\n{i.title}\n(граммы или миллилитры):')
+                                text=f'Введите вес\n{i.title}\n(граммы или миллилитры):', reply_markup=menu('masa', query))
         bot.register_next_step_handler(sent, add_new_item, food_id)
 
 
