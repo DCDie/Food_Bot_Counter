@@ -13,8 +13,8 @@ def menu(status, message):
     button9 = types.KeyboardButton(text="Назад 🔙")
     button10 = types.KeyboardButton(text="Удалить продукт 🗑")
     button11 = types.KeyboardButton(text="Параметры 🔬")
-    button12 = types.KeyboardButton(text="Женский")
-    button13 = types.KeyboardButton(text="Мужской")
+    button12 = types.KeyboardButton(text="Женский 👩🏼")
+    button13 = types.KeyboardButton(text="Мужской 👨🏻‍")
     if status == 'main':
         keyboards.row(button1, button2)
         keyboards.row(button4)
