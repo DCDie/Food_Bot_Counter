@@ -67,7 +67,7 @@ def sex_menu(message):
     session.query(Users).where(Users.user == message.from_user.id).update({Users.sex: 'Женщина'})
     session.commit()
     bot.send_message(message.from_user.id, 'Поздравляю, данные успешно добавленны!\n\nВыбери следующие действие:',
-                     reply_markup=menu('main', message))
+                     reply_markup=menu('parameters', message))
 
 
 @bot.message_handler(regexp='Мужской 👨🏻')
@@ -76,7 +76,7 @@ def sex_menu(message):
     session.query(Users).where(Users.user == message.from_user.id).update({Users.sex: 'Мужчина'})
     session.commit()
     bot.send_message(message.from_user.id, 'Поздравляю, данные успешно добавленны!\n\nВыбери следующие действие:',
-                     reply_markup=menu('main', message))
+                     reply_markup=menu('parameters', message))
 
 
 @bot.message_handler(regexp='Добавить 🍎')
