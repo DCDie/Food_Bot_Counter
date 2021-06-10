@@ -8,7 +8,7 @@ from telebot import types
 
 from buttons import menu, add_food, delete_food
 from models import database_dsn, Users, Food, Consumed
-from settings import bot, icon, dialogstatus
+from settings import bot, icon
 
 os.environ['TZ'] = 'Europe/Chisinau'
 time.tzset()
@@ -128,7 +128,6 @@ def item(message, food_id):
     food = Consumed(product=food_id, quantity=f, data=today, user=message.from_user.id, food_type=kind)
     session.add(food)
     session.commit()
-    dialogstatus[message.from_user.id] = 0
     bot.send_message(chat_id=message.from_user.id, text='Данные успешно добавлены!\nВыберите следующие действие:',
                      reply_markup=menu('main', message))
 
