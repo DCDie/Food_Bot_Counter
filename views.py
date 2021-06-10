@@ -50,7 +50,7 @@ def update_height(message):
         if height < 0:
             sent = bot.send_message(chat_id=message.from_user.id,
                                     text='Вы ввели отрицательное значение!\n\nВведите ваш рост в см:')
-            bot.register_next_step_handler(sent, update_weight)
+            bot.register_next_step_handler(sent, update_height)
             return
     except ValueError:
         bot.send_message(chat_id=message.from_user.id, text='Вы ввели не верные данные в {Изменение роств}',
@@ -69,7 +69,7 @@ def update_age(message):
         if age < 0:
             sent = bot.send_message(chat_id=message.from_user.id,
                                     text='Вы ввели отрицательное значение!\n\nваш возраст в годах:')
-            bot.register_next_step_handler(sent, update_weight)
+            bot.register_next_step_handler(sent, update_age)
             return
     except ValueError:
         bot.send_message(chat_id=message.from_user.id, text='Вы ввели не верные данные в {Изменение возраста}',
