@@ -4,7 +4,7 @@ from buttons import menu, search, delete
 from graphs import draw_big_diagram, diagram_request_sender, week_statistics_graph
 from models import database_dsn, Users, Food, Consumed
 from settings import bot
-from views import users_data, update_weight, update_height, update_age, query_add_food_view, item, \
+from views import users_data, update_weight, update_height, update_age, query_add_food_view, add_new_item, \
     query_delete_food_view, sorting_food_by_type, counting_necessary_kcal, microelements_counter, \
     collecting_diagram_data
 
@@ -109,7 +109,7 @@ def item_view(query):
     for i in food:
         sent = bot.send_message(chat_id=query.from_user.id,
                                 text=f'Введите вес\n{i.title}\n(граммы или миллилитры):')
-        bot.register_next_step_handler(sent, item, food_id)
+        bot.register_next_step_handler(sent, add_new_item, food_id)
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('delete-food-entry'))
@@ -146,10 +146,12 @@ def week_view(call):
         plt.figure()
         buf = week_statistics_graph(call, left, altitude, tick_label, plt)
         bot.send_photo(chat_id=call.from_user.id, photo=buf)
-        bot.send_message(chat_id=call.from_user.id, text=f'Выберите следующие действие:', reply_markup=menu('main', call))
+        bot.send_message(chat_id=call.from_user.id, text=f'Выберите следующие действие:',
+                         reply_markup=menu('main', call))
         plt.close()
     except TypeError:
-        bot.send_message(chat_id=call.from_user.id, text=f'Ты на этой неделе ничего не ел!', reply_markup=menu('main', call))
+        bot.send_message(chat_id=call.from_user.id, text=f'Ты на этой неделе ничего не ел!',
+                         reply_markup=menu('main', call))
 
 
 bot.polling(none_stop=True, interval=0)

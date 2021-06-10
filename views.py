@@ -107,7 +107,7 @@ def query_add_food_view(food_name):
     return food_name.id, titles
 
 
-def item(message, food_id):
+def add_new_item(message, food_id):
     msg = message.text
     try:
         f = float(msg)
