@@ -17,51 +17,51 @@ def welcome(message):
                                       f'норму питания.\n', reply_markup=menu(status, message))
 
 
-@bot.message_handler(regexp='Настройки')
+@bot.message_handler(regexp='Настройки ⚙')
 def settings_menu(message):
     menu_status = 'settings'
     bot.send_message(message.from_user.id, 'Выбери следующие действие:',
                      reply_markup=menu(menu_status, message))
 
 
-@bot.message_handler(regexp='Назад')
+@bot.message_handler(regexp='Назад 🔙')
 def back_button(message):
     menu_status = 'main'
     bot.send_message(message.from_user.id, 'Выбери следующие действие:',
                      reply_markup=menu(menu_status, message))
 
 
-@bot.message_handler(regexp='Параметры')
+@bot.message_handler(regexp='Параметры 🔬')
 def parameters_menu(message):
     menu_status = 'parameters'
     bot.send_message(message.from_user.id, 'Выбери следующие действие:',
                      reply_markup=menu(menu_status, message))
 
 
-@bot.message_handler(regexp='Вес')
+@bot.message_handler(regexp='Вес ⚖')
 def weight_menu(message):
     send = bot.send_message(message.from_user.id, 'Введите ваш вес в кг:')
     bot.register_next_step_handler(send, update_weight)
 
 
-@bot.message_handler(regexp='Рост')
+@bot.message_handler(regexp='Рост ⏫')
 def height_menu(message):
     send = bot.send_message(message.from_user.id, 'Введите ваш рост в см:')
     bot.register_next_step_handler(send, update_height)
 
 
-@bot.message_handler(regexp='Возраст')
+@bot.message_handler(regexp='Возраст ⏳')
 def age_menu(message):
     send = bot.send_message(message.from_user.id, 'Введите ваш возраст в годах:')
     bot.register_next_step_handler(send, update_age)
 
 
-@bot.message_handler(regexp='Пол')
+@bot.message_handler(regexp='Пол 🚻')
 def sex_menu(message):
     bot.send_message(message.from_user.id, 'Выберите ваш пол:', reply_markup=menu('sex', message))
 
 
-@bot.message_handler(regexp='Женский')
+@bot.message_handler(regexp='Женский 👩🏼')
 def sex_menu(message):
     session = sessionmaker(bind=database_dsn)()
     session.query(Users).where(Users.user == message.from_user.id).update({Users.sex: 'Женщина'})
@@ -70,7 +70,7 @@ def sex_menu(message):
                      reply_markup=menu('main', message))
 
 
-@bot.message_handler(regexp='Мужской')
+@bot.message_handler(regexp='Мужской 👨🏻')
 def sex_menu(message):
     session = sessionmaker(bind=database_dsn)()
     session.query(Users).where(Users.user == message.from_user.id).update({Users.sex: 'Мужчина'})
@@ -79,13 +79,13 @@ def sex_menu(message):
                      reply_markup=menu('main', message))
 
 
-@bot.message_handler(regexp='Добавить')
+@bot.message_handler(regexp='Добавить 🍎')
 def add_food_menu(message):
     bot.send_message(message.from_user.id, 'Нажмите поиск:',
                      reply_markup=search())
 
 
-@bot.message_handler(regexp='Удалить')
+@bot.message_handler(regexp='Удалить продукт 🗑')
 def delete_food_menu(message):
     bot.send_message(message.from_user.id, 'Нажмите поиск:',
                      reply_markup=delete())
@@ -122,7 +122,7 @@ def delete_item(query):
                      text=f'Запись успешно удаленна!', reply_markup=menu('main', query))
 
 
-@bot.message_handler(regexp='Мой день')
+@bot.message_handler(regexp='Мой день 🧾')
 def all_day_view(call):
     user = call.from_user.id
     output, kcal, carbohydrate, protein, fat, fiber = sorting_food_by_type(user)
@@ -139,7 +139,7 @@ def all_day_view(call):
     bot.send_message(call.from_user.id, 'Выбери следующие действие:', reply_markup=menu('main', call))
 
 
-@bot.message_handler(regexp='Моя неделя')
+@bot.message_handler(regexp='Моя неделя 📊')
 def week_view(call):
     try:
         left, altitude, tick_label = collecting_diagram_data(call)
