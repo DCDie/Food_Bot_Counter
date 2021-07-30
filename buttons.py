@@ -35,8 +35,8 @@ def menu(status, message):
         session = sessionmaker(bind=database_dsn)()
         user = session.query(Users).filter_by(user=message.from_user.id)
         for i in user:
-            button5 = types.KeyboardButton(text=f"Вес ⚖️( {i.weight: .1f} кг)")
-            button6 = types.KeyboardButton(text=f"Рост ⏫ ( {i.height: .1f} см)")
+            button5 = types.KeyboardButton(text=f"Вес ⚖️( {i.weight: .1f} кг )")
+            button6 = types.KeyboardButton(text=f"Рост ⏫ ( {i.height: .1f} см )")
             button7 = types.KeyboardButton(text=f"Возраст ⏳ ( {i.age: .0f} )")
             button8 = types.KeyboardButton(text=f"Пол 🚻 ( {i.sex} )")
             keyboards.row(button5, button6)

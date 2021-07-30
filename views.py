@@ -226,7 +226,7 @@ def counting_necessary_kcal(user_id):
             k = 5
         else:
             k = -161
-        sum_kcal = ((10 * i.weight) + (6.25 * i.height) - (5 * i.age) + k) * 1.4
+        sum_kcal = ((10 * i.weight) + (6.25 * i.height) - (5 * i.age) + k) * 1.55
     return sum_kcal
 
 
