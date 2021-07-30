@@ -7,6 +7,7 @@ from views import counting_necessary_kcal
 
 def week_statistics_graph(user_id, high, latitude, values, plt):
     kcal = counting_necessary_kcal(user_id)
+    values = rename_days(values)
     plt.bar(high, latitude, tick_label=values,
             width=0.3, label='Kcal')
     x_coordinates = [0, 7]
@@ -19,6 +20,26 @@ def week_statistics_graph(user_id, high, latitude, values, plt):
     plt.savefig(buf, format='png')
     buf.seek(0)
     return buf
+
+
+def rename_days(values):
+    for i, j in enumerate(values):
+        day = values[i].split('\n')[0]
+        if 'Mon' in j:
+            values[i] = f'{day} Пн.'
+        elif 'Tue' in j:
+            values[i] = f'{day} Вт.'
+        elif 'Wed' in j:
+            values[i] = f'{day} Ср.'
+        elif 'Thu' in j:
+            values[i] = f'{day} Чт.'
+        elif 'Fri' in j:
+            values[i] = f'{day} Пт.'
+        elif 'Sat' in j:
+            values[i] = f'{day} Сб.'
+        elif 'Sun' in j:
+            values[i] = f'{day} Вс.'
+    return values
 
 
 def diagram_factory(curent, target, name, units, bar, buf):
