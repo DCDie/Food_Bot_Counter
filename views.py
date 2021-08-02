@@ -9,7 +9,7 @@ from deep_translator import GoogleTranslator
 
 from buttons import menu, add_food, delete_food
 from models import database_dsn, Users, Food, Consumed
-from settings import bot, icon
+from settings import bot, icon, languages
 
 os.environ['TZ'] = 'Europe/Chisinau'
 time.tzset()
@@ -31,18 +31,21 @@ def update_weight(message):
     try:
         weight = float(message.text)
         if weight < 0:
+            MESSAGE = GoogleTranslator(source='auto', target=language).translate('Вы ввели отрицательное значение!\n\nВведите ваш вес в кг:')
             sent = bot.send_message(chat_id=message.from_user.id,
-                                    text='Вы ввели отрицательное значение!\n\nВведите ваш вес в кг:')
+                                    text=MESSAGE)
             bot.register_next_step_handler(sent, update_weight)
             return
     except ValueError:
-        bot.send_message(chat_id=message.from_user.id, text='Вы ввели не верные данные в {Изменение веса}',
+        MESSAGE = GoogleTranslator(source='auto', target=language).translate('Вы ввели не верные данные в {Изменение веса}')
+        bot.send_message(chat_id=message.from_user.id, text=MESSAGE,
                          reply_markup=menu('main', message, language))
         return
     session = sessionmaker(bind=database_dsn)()
     session.query(Users).where(Users.user == message.from_user.id).update({Users.weight: weight})
     session.commit()
-    bot.send_message(chat_id=message.from_user.id, text='Данные успешно добавлены!\n\nВыберите следующие действие:',
+    MESSAGE = GoogleTranslator(source='auto', target=language).translate('Данные успешно добавлены!\n\nВыберите следующие действие:')
+    bot.send_message(chat_id=message.from_user.id, text=MESSAGE,
                      reply_markup=menu('parameters', message, language))
 
 
@@ -51,18 +54,21 @@ def update_height(message):
     try:
         height = float(message.text)
         if height < 0:
+            MESSAGE = GoogleTranslator(source='auto', target=language).translate('Вы ввели отрицательное значение!\n\nВведите ваш рост в см:')
             sent = bot.send_message(chat_id=message.from_user.id,
-                                    text='Вы ввели отрицательное значение!\n\nВведите ваш рост в см:')
+                                    text=MESSAGE)
             bot.register_next_step_handler(sent, update_height)
             return
     except ValueError:
-        bot.send_message(chat_id=message.from_user.id, text='Вы ввели не верные данные в {Изменение роств}',
+        MESSAGE = GoogleTranslator(source='auto', target=language).translate('Вы ввели не верные данные в {Изменение роств}')
+        bot.send_message(chat_id=message.from_user.id, text=MESSAGE,
                          reply_markup=menu('main', message, language))
         return
     session = sessionmaker(bind=database_dsn)()
     session.query(Users).where(Users.user == message.from_user.id).update({Users.height: height})
     session.commit()
-    bot.send_message(chat_id=message.from_user.id, text='Данные успешно добавлены!\n\nВыберите следующие действие:',
+    MESSAGE = GoogleTranslator(source='auto', target=language).translate('Данные успешно добавлены!\n\nВыберите следующие действие:')
+    bot.send_message(chat_id=message.from_user.id, text=MESSAGE,
                      reply_markup=menu('parameters', message, language))
 
 
@@ -71,37 +77,41 @@ def update_age(message):
     try:
         age = float(message.text)
         if age < 0:
+            MESSAGE = GoogleTranslator(source='auto', target=language).translate('Вы ввели отрицательное значение!\n\nваш возраст в годах:')
             sent = bot.send_message(chat_id=message.from_user.id,
-                                    text='Вы ввели отрицательное значение!\n\nваш возраст в годах:')
+                                    text=MESSAGE)
             bot.register_next_step_handler(sent, update_age)
             return
     except ValueError:
-        bot.send_message(chat_id=message.from_user.id, text='Вы ввели не верные данные в {Изменение возраста}',
+        MESSAGE = GoogleTranslator(source='auto', target=language).translate('Вы ввели не верные данные в {Изменение возраста}')
+        bot.send_message(chat_id=message.from_user.id, text=MESSAGE,
                          reply_markup=menu('main', message, language))
         return
     session = sessionmaker(bind=database_dsn)()
     session.query(Users).where(Users.user == message.from_user.id).update({Users.age: age})
     session.commit()
-    bot.send_message(chat_id=message.from_user.id, text='Данные успешно добавлены!\n\nВыберите следующие действие:',
+    MESSAGE = GoogleTranslator(source='auto', target=language).translate('Данные успешно добавлены!\n\nВыберите следующие действие:')
+    bot.send_message(chat_id=message.from_user.id, text=MESSAGE,
                      reply_markup=menu('parameters', message, language))
 
 
-def query_add_food_view(food_name):
+def query_add_food_view(food_name, language):
+    lang = languages[language]
     name = food_name.query.lower().split(':')[-1]
     if name:
         name = GoogleTranslator(source='auto', target='ru').translate(name)
     session = sessionmaker(bind=database_dsn)()
-    foods = session.query(Food).filter(Food.title.contains(name)).limit(20)
+    foods = session.query(Food).filter(Food.title.contains(name)).limit(6)
     titles = []
     for i in foods:
         content = types.InputTextMessageContent(
-            message_text=f'{i.title.capitalize()} - {i.energy} kcal/100 гр',
+            message_text=f'{GoogleTranslator(source="auto", target=language).translate(i.title.capitalize())} - {i.energy} {lang["kcal_sg"]}/100 {lang["g"]}',
         )
 
         title = types.InlineQueryResultArticle(
             id=i.id,
-            title=i.title.capitalize(),
-            description=f'Каллорий на 100г.: {i.energy} kcal',
+            title=GoogleTranslator(source='auto', target=language).translate(i.title.capitalize()),
+            description=f'{lang["kcal100"]} {i.energy} {lang["kcal_sg"]}',
             input_message_content=content,
             reply_markup=add_food(i.id, food_name.from_user.language_code),
             thumb_url=icon,
@@ -119,8 +129,9 @@ def add_new_item(message, food_id):
     try:
         f = float(msg)
     except ValueError:
-        bot.send_message(chat_id=message.from_user.id, text='Вы ввели не верные данные!\nВведите вес продукта('
-                                                            'граммы или миллилитры)!',
+        MESSAGE = GoogleTranslator(source='auto', target=language).translate('Вы ввели не верные данные!\nВведите вес продукта('
+                                                            'граммы или миллилитры)!')
+        bot.send_message(chat_id=message.from_user.id, text=MESSAGE,
                          reply_markup=add_food(food_id, language))
         return
     today = datetime.now()
@@ -135,12 +146,14 @@ def add_new_item(message, food_id):
     food = Consumed(product=food_id, quantity=f, data=today, user=message.from_user.id, food_type=kind)
     session.add(food)
     session.commit()
-    bot.send_message(chat_id=message.from_user.id, text='Данные успешно добавлены!\nВыберите следующие действие:',
+    MESSAGE = GoogleTranslator(source='auto', target=language).translate('Данные успешно добавлены!\nВыберите следующие действие:')
+    bot.send_message(chat_id=message.from_user.id, text=MESSAGE,
                      reply_markup=menu('main', message, language))
 
 
-def query_delete_food_view(food_name):
+def query_delete_food_view(food_name, language):
     foodname = food_name.query.lower().split(':')[-1]
+    lang = languages[language]
     if foodname:
         foodname = GoogleTranslator(source='auto', target='ru').translate(foodname)
     today = date.today()
@@ -149,17 +162,17 @@ def query_delete_food_view(food_name):
         (Consumed.data == today) &
         (Consumed.user == food_name.from_user.id) &
         (Food.title.contains(foodname)) &
-        (Food.id == Consumed.product))
+        (Food.id == Consumed.product)).limit(6)
     titles = []
     for i in calorii:
         data = types.InputTextMessageContent(
-            message_text=f'{i.Food.title.capitalize()}\nКолличество: {i.Consumed.quantity}'
+            message_text=f'{GoogleTranslator(source="auto", target=language).translate(i.Food.title.capitalize())}\n{lang["quantity"]}: {i.Consumed.quantity}'
         )
 
         record = types.InlineQueryResultArticle(
             id=i.Consumed.id,
-            title=i.Food.title.capitalize(),
-            description=f'Колличество: {i.Consumed.quantity}',
+            title=GoogleTranslator(source='auto', target=language).translate(i.Food.title.capitalize()),
+            description=f'{lang["quantity"]}: {i.Consumed.quantity}',
             input_message_content=data,
             reply_markup=delete_food(i.Consumed.id, food_name.from_user.language_code),
             thumb_url=icon,
@@ -170,7 +183,7 @@ def query_delete_food_view(food_name):
     return food_name.id, titles
 
 
-def sorting_food_by_type(user):
+def sorting_food_by_type(user, language):
     today = date.today()
     kcal = 0
     carbohydrate = 0
@@ -189,11 +202,11 @@ def sorting_food_by_type(user):
         protein += f.Food.protein * quantity
         fat += f.Food.fat * quantity
         fiber += f.Food.fiber * quantity
-    output = list_products_eaten_this_day(user)
+    output = list_products_eaten_this_day(user, language)
     return output, kcal, carbohydrate, protein, fat, fiber
 
 
-def list_products_eaten_this_day(user):
+def list_products_eaten_this_day(user, language):
     output = ''
     breakfast = str('ЗАВТРАК:\n\n')
     lunch = str('ОБЕД:\n\n')
@@ -205,17 +218,18 @@ def list_products_eaten_this_day(user):
         (Consumed.data.between(f'{today} 00:00:00', f'{today} 23:59:59')))
     for f in query:
         if f.Consumed.food_type == 'BREAKFAST':
-            breakfast = breakfast + f'{f.Food.title}\n'
+            breakfast = breakfast + f'{f.Food.title.capitalize()}\n'
         elif f.Consumed.food_type == 'LUNCH':
-            lunch = lunch + f'{f.Food.title}\n'
+            lunch = lunch + f'{f.Food.title.capitalize()}\n'
         elif f.Consumed.food_type == 'DINNER':
-            dinner = dinner + f'{f.Food.title}\n'
+            dinner = dinner + f'{f.Food.title.capitalize()}\n'
     if breakfast != 'ЗАВТРАК:\n\n':
         output = output + f'{breakfast}\n'
     if lunch != 'ОБЕД:\n\n':
         output = output + f'{lunch}\n'
     if dinner != 'УЖИН:\n\n':
         output = output + f'{dinner}\n'
+    output = GoogleTranslator(source='auto', target=language).translate(output)
 
     return output
 

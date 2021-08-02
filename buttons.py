@@ -1,9 +1,7 @@
 from sqlalchemy.orm import sessionmaker
 from telebot import types
-from deep_translator import GoogleTranslator
 from models import database_dsn, Users
-
-languages = {'ru': {'day': 'Мой день', 'week': 'Моя неделя', 'settings': 'Настройки', 'add': 'Добавить', 'back': 'Назад', 'delete': 'Удалить продукт', 'parameters': 'Параметры', 'woman': 'Женский', 'man': 'Мужской', 'weight': 'Вес', 'height': 'Рост', 'age': 'Возраст', 'sex': 'Пол', 'search': 'Поиск', 'add_weight': 'Добавить вес', 'another_product': 'Выбрать другой продукт'}}
+from settings import languages
 
 def menu(status, message, language):
     lang = languages[language]
@@ -40,7 +38,10 @@ def menu(status, message, language):
             button5 = types.KeyboardButton(text=f"{lang['weight']} ⚖️( {i.weight: .1f} kg )")
             button6 = types.KeyboardButton(text=f"{lang['height']} ⏫ ( {i.height: .1f} cm )")
             button7 = types.KeyboardButton(text=f"{lang['age']} ⏳ ( {i.age: .0f} )")
-            button8 = types.KeyboardButton(text=f"{lang['sex']} 🚻 ( {i.sex} )")
+            if i.sex == 'Мужчина':
+                button8 = types.KeyboardButton(text=f"{lang['sex']} 🚻 ( {lang['man']} )")
+            else:
+                button8 = types.KeyboardButton(text=f"{lang['sex']} 🚻 ( {lang['woman']} )")
             keyboards.row(button5, button6)
             keyboards.row(button7, button8)
             keyboards.row(button9)
