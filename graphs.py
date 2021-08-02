@@ -1,7 +1,7 @@
 import io
 
 import matplotlib.pyplot as plt
-
+from deep_translator import GoogleTranslator
 from views import counting_necessary_kcal
 
 
@@ -24,21 +24,7 @@ def week_statistics_graph(user_id, high, latitude, values, plt):
 
 def rename_days(values):
     for i, j in enumerate(values):
-        day = values[i].split('\n')[0]
-        if 'Mon' in j:
-            values[i] = f'{day} Пн.'
-        elif 'Tue' in j:
-            values[i] = f'{day} Вт.'
-        elif 'Wed' in j:
-            values[i] = f'{day} Ср.'
-        elif 'Thu' in j:
-            values[i] = f'{day} Чт.'
-        elif 'Fri' in j:
-            values[i] = f'{day} Пт.'
-        elif 'Sat' in j:
-            values[i] = f'{day} Сб.'
-        elif 'Sun' in j:
-            values[i] = f'{day} Вс.'
+        values[i] = GoogleTranslator(source='en', target='ru').translate(j)
     return values
 
 
