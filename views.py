@@ -5,6 +5,7 @@ from datetime import datetime, date, timedelta
 from sqlalchemy import func
 from sqlalchemy.orm import sessionmaker
 from telebot import types
+from deep_translator import GoogleTranslator
 
 from buttons import menu, add_food, delete_food
 from models import database_dsn, Users, Food, Consumed
@@ -26,6 +27,7 @@ def users_data(message):
 
 
 def update_weight(message):
+    language = message.from_user.language_code
     try:
         weight = float(message.text)
         if weight < 0:
@@ -35,16 +37,17 @@ def update_weight(message):
             return
     except ValueError:
         bot.send_message(chat_id=message.from_user.id, text='Вы ввели не верные данные в {Изменение веса}',
-                         reply_markup=menu('main', message))
+                         reply_markup=menu('main', message, language))
         return
     session = sessionmaker(bind=database_dsn)()
     session.query(Users).where(Users.user == message.from_user.id).update({Users.weight: weight})
     session.commit()
     bot.send_message(chat_id=message.from_user.id, text='Данные успешно добавлены!\n\nВыберите следующие действие:',
-                     reply_markup=menu('parameters', message))
+                     reply_markup=menu('parameters', message, language))
 
 
 def update_height(message):
+    language = message.from_user.language_code
     try:
         height = float(message.text)
         if height < 0:
@@ -54,16 +57,17 @@ def update_height(message):
             return
     except ValueError:
         bot.send_message(chat_id=message.from_user.id, text='Вы ввели не верные данные в {Изменение роств}',
-                         reply_markup=menu('main', message))
+                         reply_markup=menu('main', message, language))
         return
     session = sessionmaker(bind=database_dsn)()
     session.query(Users).where(Users.user == message.from_user.id).update({Users.height: height})
     session.commit()
     bot.send_message(chat_id=message.from_user.id, text='Данные успешно добавлены!\n\nВыберите следующие действие:',
-                     reply_markup=menu('parameters', message))
+                     reply_markup=menu('parameters', message, language))
 
 
 def update_age(message):
+    language = message.from_user.language_code
     try:
         age = float(message.text)
         if age < 0:
@@ -73,17 +77,19 @@ def update_age(message):
             return
     except ValueError:
         bot.send_message(chat_id=message.from_user.id, text='Вы ввели не верные данные в {Изменение возраста}',
-                         reply_markup=menu('main', message))
+                         reply_markup=menu('main', message, language))
         return
     session = sessionmaker(bind=database_dsn)()
     session.query(Users).where(Users.user == message.from_user.id).update({Users.age: age})
     session.commit()
     bot.send_message(chat_id=message.from_user.id, text='Данные успешно добавлены!\n\nВыберите следующие действие:',
-                     reply_markup=menu('parameters', message))
+                     reply_markup=menu('parameters', message, language))
 
 
 def query_add_food_view(food_name):
     name = food_name.query.lower().split(':')[-1]
+    if name:
+        name = GoogleTranslator(source='auto', target='ru').translate(name)
     session = sessionmaker(bind=database_dsn)()
     foods = session.query(Food).filter(Food.title.contains(name)).limit(20)
     titles = []
@@ -97,7 +103,7 @@ def query_add_food_view(food_name):
             title=i.title.capitalize(),
             description=f'Каллорий на 100г.: {i.energy} kcal',
             input_message_content=content,
-            reply_markup=add_food(i.id),
+            reply_markup=add_food(i.id, food_name.from_user.language_code),
             thumb_url=icon,
             thumb_width=48,
             thumb_height=48
@@ -109,12 +115,13 @@ def query_add_food_view(food_name):
 
 def add_new_item(message, food_id):
     msg = message.text
+    language = message.from_user.language_code
     try:
         f = float(msg)
     except ValueError:
         bot.send_message(chat_id=message.from_user.id, text='Вы ввели не верные данные!\nВведите вес продукта('
                                                             'граммы или миллилитры)!',
-                         reply_markup=add_food(food_id))
+                         reply_markup=add_food(food_id, language))
         return
     today = datetime.now()
     kind = None
@@ -129,11 +136,13 @@ def add_new_item(message, food_id):
     session.add(food)
     session.commit()
     bot.send_message(chat_id=message.from_user.id, text='Данные успешно добавлены!\nВыберите следующие действие:',
-                     reply_markup=menu('main', message))
+                     reply_markup=menu('main', message, language))
 
 
 def query_delete_food_view(food_name):
     foodname = food_name.query.lower().split(':')[-1]
+    if foodname:
+        foodname = GoogleTranslator(source='auto', target='ru').translate(foodname)
     today = date.today()
     session = sessionmaker(bind=database_dsn)()
     calorii = session.query(Consumed, Food).outerjoin(Food, Consumed.product == Food.id).where(
@@ -152,7 +161,7 @@ def query_delete_food_view(food_name):
             title=i.Food.title.capitalize(),
             description=f'Колличество: {i.Consumed.quantity}',
             input_message_content=data,
-            reply_markup=delete_food(i.Consumed.id),
+            reply_markup=delete_food(i.Consumed.id, food_name.from_user.language_code),
             thumb_url=icon,
             thumb_width=48,
             thumb_height=48
