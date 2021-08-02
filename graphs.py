@@ -26,7 +26,8 @@ def week_statistics_graph(user_id, high, latitude, values, plt, language):
 
 def rename_days(values, language):
     for i, j in enumerate(values):
-        values[i] = GoogleTranslator(source='auto', target=language).translate(j)
+        if language != 'en':
+            values[i] = GoogleTranslator(source='en', target=language).translate(j)
     return values
 
 

@@ -98,7 +98,7 @@ def update_age(message):
 def query_add_food_view(food_name, language):
     lang = languages[language]
     name = food_name.query.lower().split(':')[-1]
-    if name:
+    if name and language != 'ru':
         name = GoogleTranslator(source='auto', target='ru').translate(name)
     session = sessionmaker(bind=database_dsn)()
     foods = session.query(Food).filter(Food.title.contains(name)).limit(6)
