@@ -229,7 +229,8 @@ def list_products_eaten_this_day(user, language):
         output = output + f'{lunch}\n'
     if dinner != 'УЖИН:\n\n':
         output = output + f'{dinner}\n'
-    output = GoogleTranslator(source='auto', target=language).translate(output)
+    if output:
+        output = GoogleTranslator(source='auto', target=language).translate(output)
 
     return output
 
