@@ -96,7 +96,10 @@ def update_age(message):
 
 
 def query_add_food_view(food_name, language):
-    lang = languages[language]
+    try:
+        lang = languages[language]
+    except KeyError:
+        lang = languages['en']
     name = food_name.query.lower().split(':')[-1]
     if name and language != 'ru':
         name = GoogleTranslator(source='auto', target='ru').translate(name)
@@ -153,7 +156,10 @@ def add_new_item(message, food_id):
 
 def query_delete_food_view(food_name, language):
     foodname = food_name.query.lower().split(':')[-1]
-    lang = languages[language]
+    try:
+        lang = languages[language]
+    except KeyError:
+        lang = languages['en']
     if foodname:
         foodname = GoogleTranslator(source='auto', target='ru').translate(foodname)
     today = date.today()

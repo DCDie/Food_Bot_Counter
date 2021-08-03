@@ -133,11 +133,15 @@ def view_data(query):
 @bot.callback_query_handler(func=lambda call: call.data.startswith('add-food-entry'))
 def item_view(message):
     language = message.from_user.language_code
+    try:
+        lang = languages[language]
+    except KeyError:
+        lang = languages['en']
     food_id = message.data.split('-')[-1]
     session = sessionmaker(bind=database_dsn)()
     food = session.query(Food).where(Food.id == food_id)
     for i in food:
-        MESSAGE = f'{languages[language]["weight_ad"]}\n{GoogleTranslator(source="auto", target=language).translate(i.title)}\n{languages[language]["gm"]}'
+        MESSAGE = f'{lang["weight_ad"]}\n{GoogleTranslator(source="auto", target=language).translate(i.title)}\n{lang["gm"]}'
         sent = bot.send_message(chat_id=message.from_user.id,
                                 text=MESSAGE, reply_markup=menu('masa', message, language))
         bot.register_next_step_handler(sent, add_new_item, food_id)

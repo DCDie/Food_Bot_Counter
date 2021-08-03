@@ -8,6 +8,10 @@ from views import counting_necessary_kcal
 
 
 def week_statistics_graph(user_id, high, latitude, values, plt, language):
+    try:
+        lang = languages[language]
+    except KeyError:
+        lang = languages['en']
     kcal = counting_necessary_kcal(user_id)
     values = rename_days(values, language)
     plt.bar(high, latitude, tick_label=values,
@@ -15,9 +19,9 @@ def week_statistics_graph(user_id, high, latitude, values, plt, language):
     x_coordinates = [0, 7]
     y_coordinates = [kcal, kcal]
     plt.plot(x_coordinates, y_coordinates, color='red')
-    plt.ylabel(languages[language]['kcal'])
-    plt.title(languages[language]['week_st'])
-    plt.legend([languages[language]['st1'], languages[language]['st2']])
+    plt.ylabel(lang['kcal'])
+    plt.title(lang['week_st'])
+    plt.legend([lang['st1'], lang['st2']])
     buf = io.BytesIO()
     plt.savefig(buf, format='png')
     buf.seek(0)
@@ -32,7 +36,10 @@ def rename_days(values, language):
 
 
 def diagram_factory(curent, target, name, units, bar, buf, language):
-    lang = languages[language]
+    try:
+        lang = languages[language]
+    except KeyError:
+        lang = languages['en']
     if target - curent > 0:
         colors = ['#00cc66', '#b3ffd9']
         slices = [curent, target - curent]
@@ -57,7 +64,10 @@ def draw_day_statistic_plot(name, colors, legend, slices, bar, buf):
 
 
 def diagram_request_sender(carbohydrate, sum_carbohydrates, protein, sum_protein, fat, sum_fat, fiber, sum_fiber, language):
-    lang = languages[language]
+    try:
+        lang = languages[language]
+    except KeyError:
+        lang = languages['en']
     plt.figure()
     buf = io.BytesIO()
     plt.subplot(2, 2, 1)
@@ -77,8 +87,12 @@ def diagram_request_sender(carbohydrate, sum_carbohydrates, protein, sum_protein
 
 
 def draw_big_diagram(kcal, sum_kcal, language):
-    signification = languages[language]['kcal_sg']
-    title = f'{languages[language]["kcal"]} ({sum_kcal: .0f} {signification} )'
+    try:
+        lang = languages[language]
+    except KeyError:
+        lang = languages['en']
+    signification = lang['kcal_sg']
+    title = f'{lang["kcal"]} ({sum_kcal: .0f} {signification} )'
     plt.figure()
     buf = io.BytesIO()
     buf = diagram_factory(kcal, sum_kcal, title, signification, plt, buf, language)

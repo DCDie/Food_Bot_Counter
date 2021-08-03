@@ -4,7 +4,10 @@ from models import database_dsn, Users
 from settings import languages
 
 def menu(status, message, language):
-    lang = languages[language]
+    try:
+        lang = languages[language]
+    except KeyError:
+        lang = languages['en']
     keyboards = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button1 = types.KeyboardButton(text=f"{lang['day']} 🧾")
     button2 = types.KeyboardButton(text=f"{lang['week']} 📊")
@@ -57,21 +60,30 @@ def menu(status, message, language):
 
 
 def search(language):
-    lang = languages[language]
+    try:
+        lang = languages[language]
+    except KeyError:
+        lang = languages['en']
     keyboard = types.InlineKeyboardMarkup()
     keyboard.add(types.InlineKeyboardButton(text=f"{lang['search']} 🔎", switch_inline_query_current_chat="add:"))
     return keyboard
 
 
 def delete(language):
-    lang = languages[language]
+    try:
+        lang = languages[language]
+    except KeyError:
+        lang = languages['en']
     keyboard = types.InlineKeyboardMarkup()
     keyboard.add(types.InlineKeyboardButton(text=f"{lang['search']} 🔎", switch_inline_query_current_chat="delete:"))
     return keyboard
 
 
 def add_food(food_id, language):
-    lang = languages[language]
+    try:
+        lang = languages[language]
+    except KeyError:
+        lang = languages['en']
     food = types.InlineKeyboardMarkup()
     food.add(types.InlineKeyboardButton(text=f"{lang['add_weight']} ⚖", callback_data=f"add-food-entry-{food_id}"))
     food.add(types.InlineKeyboardButton(text=f"{lang['another_product']} 🍎", switch_inline_query_current_chat="add:"))
@@ -79,7 +91,10 @@ def add_food(food_id, language):
 
 
 def delete_food(food_id, language):
-    lang = languages[language]
+    try:
+        lang = languages[language]
+    except KeyError:
+        lang = languages['en']
     food = types.InlineKeyboardMarkup()
     food.add(types.InlineKeyboardButton(text=f"{lang['delete']} 🗑", callback_data=f"delete-food-entry-{food_id}"))
     food.add(types.InlineKeyboardButton(text=f"{lang['another_product']} 🗑", switch_inline_query_current_chat="delete:"))
