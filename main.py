@@ -13,14 +13,7 @@ from views import users_data, update_weight, update_height, update_age, query_ad
 @bot.message_handler(commands=['start'])
 def welcome(message):
     language = message.from_user.language_code
-    MESSAGE = GoogleTranslator(source='auto', target=language).translate(
-        f'Привет!\n\nЯ бот. Приятно познакомиться, {message.from_user.first_name}')
-    bot.send_message(message.from_user.id, MESSAGE)
-    status = users_data(message)
-    MESSAGE = GoogleTranslator(source='auto', target=language).translate(
-        f'Пройдите опрос (Настройки->Параметры) чтобы точнее расчитать вашу дневную '
-                                      f'норму питания.\n')
-    bot.send_message(message.from_user.id, MESSAGE, reply_markup=menu(status, message, language))
+    return users_data(message, language)
 
 
 @bot.message_handler(regexp='⚙')

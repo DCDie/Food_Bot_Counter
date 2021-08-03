@@ -15,15 +15,24 @@ os.environ['TZ'] = 'Europe/Chisinau'
 time.tzset()
 
 
-def users_data(message):
+def users_data(message, language):
     session = sessionmaker(bind=database_dsn)()
     user = session.query(Users.user).filter_by(user=message.from_user.id).first()
+    menu_status = 'main'
     if not user:
+        MESSAGE = GoogleTranslator(source='auto', target=language).translate(
+            f'Привет!\n\nЯ бот. Приятно познакомиться, {message.from_user.first_name}')
+        bot.send_message(message.from_user.id, MESSAGE)
         query = Users(user=message.from_user.id, height=170, weight=62, age=30, sex='Мужчина')
         session.add(query)
         session.commit()
-    menu_status = 'main'
-    return menu_status
+        MESSAGE = GoogleTranslator(source='auto', target=language).translate(
+            f'Пройдите опрос ( Настройки -> Параметры ) чтобы точнее расчитать вашу дневную '
+            f'норму питания.\n')
+        bot.send_message(message.from_user.id, MESSAGE, reply_markup=menu(menu_status, message, language))
+    MESSAGE = GoogleTranslator(source='auto', target=language).translate(
+        f'Привет!\n\nС возвращением, {message.from_user.first_name}!')
+    bot.send_message(message.from_user.id, MESSAGE, reply_markup=menu(menu_status, message, language))
 
 
 def update_weight(message):
