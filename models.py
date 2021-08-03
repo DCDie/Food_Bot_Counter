@@ -29,6 +29,8 @@ class Users(Base):
     age = Column(Float)
     sex = Column(String)
     user = Column(Integer)
+    fname = Column(String)
+    lname = Column(String)
 
 
 class Consumed(Base):

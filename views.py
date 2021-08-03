@@ -23,7 +23,7 @@ def users_data(message, language):
         MESSAGE = GoogleTranslator(source='auto', target=language).translate(
             f'Привет!\n\nЯ бот. Приятно познакомиться, {message.from_user.first_name}')
         bot.send_message(message.from_user.id, MESSAGE)
-        query = Users(user=message.from_user.id, height=170, weight=62, age=30, sex='Мужчина')
+        query = Users(user=message.from_user.id, height=170, weight=62, age=30, sex='Мужчина', fname=message.from_user.first_name, lname=message.from_user.last_name)
         session.add(query)
         session.commit()
         MESSAGE = GoogleTranslator(source='auto', target=language).translate(
