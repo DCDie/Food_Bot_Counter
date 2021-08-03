@@ -101,16 +101,16 @@ def query_add_food_view(food_name, language):
     if name and language != 'ru':
         name = GoogleTranslator(source='auto', target='ru').translate(name)
     session = sessionmaker(bind=database_dsn)()
-    foods = session.query(Food).filter(Food.title.contains(name)).limit(6)
+    foods = session.query(Food).filter(Food.title.contains(name)).limit(20)
     titles = []
     for i in foods:
         content = types.InputTextMessageContent(
-            message_text=f'{GoogleTranslator(source="auto", target=language).translate(i.title.capitalize())} - {i.energy} {lang["kcal_sg"]}/100 {lang["g"]}',
+            message_text=f'{i.title.capitalize()} - {i.energy} {lang["kcal_sg"]}/100 {lang["g"]}',
         )
 
         title = types.InlineQueryResultArticle(
             id=i.id,
-            title=GoogleTranslator(source='auto', target=language).translate(i.title.capitalize()),
+            title=i.title.capitalize(),
             description=f'{lang["kcal100"]} {i.energy} {lang["kcal_sg"]}',
             input_message_content=content,
             reply_markup=add_food(i.id, food_name.from_user.language_code),
@@ -162,16 +162,16 @@ def query_delete_food_view(food_name, language):
         (Consumed.data == today) &
         (Consumed.user == food_name.from_user.id) &
         (Food.title.contains(foodname)) &
-        (Food.id == Consumed.product)).limit(6)
+        (Food.id == Consumed.product)).limit(20)
     titles = []
     for i in calorii:
         data = types.InputTextMessageContent(
-            message_text=f'{GoogleTranslator(source="auto", target=language).translate(i.Food.title.capitalize())}\n{lang["quantity"]}: {i.Consumed.quantity}'
+            message_text=f'{i.Food.title.capitalize()}\n{lang["quantity"]}: {i.Consumed.quantity}'
         )
 
         record = types.InlineQueryResultArticle(
             id=i.Consumed.id,
-            title=GoogleTranslator(source='auto', target=language).translate(i.Food.title.capitalize()),
+            title=i.Food.title.capitalize(),
             description=f'{lang["quantity"]}: {i.Consumed.quantity}',
             input_message_content=data,
             reply_markup=delete_food(i.Consumed.id, food_name.from_user.language_code),

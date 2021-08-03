@@ -4,6 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from settings import user, password, host, port, database
 
 database_dsn = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{database}')
+#database_dsn = create_engine(f'postgresql://postgres:postgres@127.0.0.1:5432/food')
 meta = MetaData()
 
 Base = declarative_base()
