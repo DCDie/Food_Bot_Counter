@@ -113,7 +113,7 @@ def query_add_food_view(food_name, language):
     if name and language != 'ru':
         name = GoogleTranslator(source='auto', target='ru').translate(name)
     session = sessionmaker(bind=database_dsn)()
-    foods = session.query(Food).filter(Food.title.contains(name)).limit(20)
+    foods = session.query(Food).filter(Food.title.contains(name.strip())).limit(20)
     titles = []
     for i in foods:
         content = types.InputTextMessageContent(
@@ -176,7 +176,7 @@ def query_delete_food_view(food_name, language):
     calorii = session.query(Consumed, Food).outerjoin(Food, Consumed.product == Food.id).where(
         (Consumed.data == today) &
         (Consumed.user == food_name.from_user.id) &
-        (Food.title.contains(foodname)) &
+        (Food.title.contains(foodname.strip())) &
         (Food.id == Consumed.product)).limit(20)
     titles = []
     for i in calorii:
