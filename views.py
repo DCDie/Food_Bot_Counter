@@ -8,7 +8,7 @@ from telebot import types
 from deep_translator import GoogleTranslator
 
 from buttons import menu, add_food, delete_food
-from models import database_dsn, Users, Food, Consumed
+from models import database_dsn, Users, Food, Consumed, FoodLang
 from settings import bot, icon, languages
 
 os.environ['TZ'] = 'Europe/Chisinau'
@@ -110,22 +110,21 @@ def query_add_food_view(food_name, language):
     except KeyError:
         lang = languages['en']
     name = food_name.query.lower().split(':')[-1]
-    if name and language != 'ru':
-        name = GoogleTranslator(source='auto', target='ru').translate(name)
     session = sessionmaker(bind=database_dsn)()
-    foods = session.query(Food).filter(Food.title.contains(name.strip())).limit(20)
+    foods = session.query(FoodLang).filter((FoodLang.title.contains(name.strip())) & (FoodLang.language == language)).limit(20)
     titles = []
     for i in foods:
+        food = session.query(Food).filter(Food.id == i.foodid).first()
         content = types.InputTextMessageContent(
-            message_text=f'{i.title.capitalize()} - {i.energy} {lang["kcal_sg"]}/100 {lang["g"]}',
+            message_text=f'{i.title.capitalize()} - {food.energy} {lang["kcal_sg"]}/100 {lang["g"]}',
         )
 
         title = types.InlineQueryResultArticle(
-            id=i.id,
+            id=i.foodid,
             title=i.title.capitalize(),
-            description=f'{lang["kcal100"]} {i.energy} {lang["kcal_sg"]}',
+            description=f'{lang["kcal100"]} {food.energy} {lang["kcal_sg"]}',
             input_message_content=content,
-            reply_markup=add_food(i.id, food_name.from_user.language_code),
+            reply_markup=add_food(i.foodid, food_name.from_user.language_code),
             thumb_url=icon,
             thumb_width=48,
             thumb_height=48
@@ -169,8 +168,6 @@ def query_delete_food_view(food_name, language):
         lang = languages[language]
     except KeyError:
         lang = languages['en']
-    if foodname:
-        foodname = GoogleTranslator(source='auto', target='ru').translate(foodname)
     today = date.today()
     session = sessionmaker(bind=database_dsn)()
     calorii = session.query(Consumed, Food).outerjoin(Food, Consumed.product == Food.id).where(
@@ -180,13 +177,14 @@ def query_delete_food_view(food_name, language):
         (Food.id == Consumed.product)).limit(20)
     titles = []
     for i in calorii:
+        food = session.query(FoodLang).filter((FoodLang.foodid == i.Food.id) & (FoodLang.language == language)).first()
         data = types.InputTextMessageContent(
             message_text=f'{i.Food.title.capitalize()}\n{lang["quantity"]}: {i.Consumed.quantity}'
         )
 
         record = types.InlineQueryResultArticle(
             id=i.Consumed.id,
-            title=i.Food.title.capitalize(),
+            title=food.title.capitalize(),
             description=f'{lang["quantity"]}: {i.Consumed.quantity}',
             input_message_content=data,
             reply_markup=delete_food(i.Consumed.id, food_name.from_user.language_code),
@@ -232,12 +230,13 @@ def list_products_eaten_this_day(user, language):
         (Consumed.user == user) & (Food.id == Consumed.product) &
         (Consumed.data.between(f'{today} 00:00:00', f'{today} 23:59:59')))
     for f in query:
+        food = session.query(FoodLang).filter((FoodLang.foodid == f.Food.id) & (FoodLang.language == language)).first()
         if f.Consumed.food_type == 'BREAKFAST':
-            breakfast = breakfast + f'{f.Food.title.capitalize()}\n'
+            breakfast = breakfast + f'{food.title.capitalize()}\n'
         elif f.Consumed.food_type == 'LUNCH':
-            lunch = lunch + f'{f.Food.title.capitalize()}\n'
+            lunch = lunch + f'{food.title.capitalize()}\n'
         elif f.Consumed.food_type == 'DINNER':
-            dinner = dinner + f'{f.Food.title.capitalize()}\n'
+            dinner = dinner + f'{food.title.capitalize()}\n'
     if breakfast != 'ЗАВТРАК:\n\n':
         output = output + f'{breakfast}\n'
     if lunch != 'ОБЕД:\n\n':

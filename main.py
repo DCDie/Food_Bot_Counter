@@ -2,7 +2,7 @@ from sqlalchemy.orm import sessionmaker
 import matplotlib.pyplot as plt
 from buttons import menu, search, delete
 from graphs import draw_big_diagram, diagram_request_sender, week_statistics_graph
-from models import database_dsn, Users, Food, Consumed
+from models import database_dsn, Users, Food, Consumed, FoodLang
 from settings import bot, languages
 from deep_translator import GoogleTranslator
 from views import users_data, update_weight, update_height, update_age, query_add_food_view, add_new_item, \
@@ -132,9 +132,9 @@ def item_view(message):
         lang = languages['en']
     food_id = message.data.split('-')[-1]
     session = sessionmaker(bind=database_dsn)()
-    food = session.query(Food).where(Food.id == food_id)
+    food = session.query(FoodLang).where((FoodLang.foodid == food_id) & (FoodLang.language == language))
     for i in food:
-        MESSAGE = f'{lang["weight_ad"]}\n{GoogleTranslator(source="auto", target=language).translate(i.title)}\n{lang["gm"]}'
+        MESSAGE = f'{lang["weight_ad"]}\n{i.title.capitalize()}\n{lang["gm"]}'
         sent = bot.send_message(chat_id=message.from_user.id,
                                 text=MESSAGE, reply_markup=menu('masa', message, language))
         bot.register_next_step_handler(sent, add_new_item, food_id)

@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from settings import user, password, host, port, database
 
 database_dsn = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{database}')
-#database_dsn = create_engine(f'postgresql://postgres:postgres@127.0.0.1:5432/food')
+# database_dsn = create_engine(f'postgresql://postgres:postgres@127.0.0.1:5432/food')
 meta = MetaData()
 
 Base = declarative_base()
@@ -41,3 +41,11 @@ class Consumed(Base):
     data = Column(Date)
     user = Column(Integer)
     food_type = Column(String)
+
+
+class FoodLang(Base):
+    __tablename__ = "food_lang"
+    id = Column(Integer, primary_key=True)
+    title = Column(String)
+    foodid = Column(Integer, ForeignKey('food.id'))
+    language = Column(String)
