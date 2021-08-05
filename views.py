@@ -111,7 +111,7 @@ def query_add_food_view(food_name, language):
         lang = languages['en']
     name = food_name.query.lower().split(':')[-1]
     session = sessionmaker(bind=database_dsn)()
-    foods = session.query(FoodLang).filter((FoodLang.title.contains(name.strip())) & (FoodLang.language == language)).limit(20)
+    foods = session.query(FoodLang).filter((FoodLang.title.contains(name.strip())) & (FoodLang.language == language)).order_by(FoodLang.id).limit(20)
     titles = []
     for i in foods:
         food = session.query(Food).filter(Food.id == i.foodid).first()
@@ -174,7 +174,7 @@ def query_delete_food_view(food_name, language):
         (Consumed.data == today) &
         (Consumed.user == food_name.from_user.id) &
         (Food.title.contains(foodname.strip())) &
-        (Food.id == Consumed.product)).limit(20)
+        (Food.id == Consumed.product)).order_by(Consumed.id).limit(20)
     titles = []
     for i in calorii:
         food = session.query(FoodLang).filter((FoodLang.foodid == i.Food.id) & (FoodLang.language == language)).first()
