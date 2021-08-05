@@ -30,8 +30,23 @@ def week_statistics_graph(user_id, high, latitude, values, plt, language):
 
 def rename_days(values, language):
     for i, j in enumerate(values):
+        data = j.split('\n')[0]
+        if j.split('\n')[-1] == 'Mon':
+            values[i] = f'Monday'
+        elif j.split('\n')[-1] == 'Tue':
+            values[i] = 'Tuesday'
+        elif j.split('\n')[-1] == 'Wed':
+            values[i] = 'Wednesday'
+        elif j.split('\n')[-1] == 'Thu':
+            values[i] = 'Thursday'
+        elif j.split('\n')[-1] == 'Fri':
+            values[i] = 'Friday'
+        elif j.split('\n')[-1] == 'Sat':
+            values[i] = 'Saturday'
+        elif j.split('\n')[-1] == 'Sun':
+            values[i] = 'Sunday'
         if language != 'en':
-            values[i] = GoogleTranslator(source='en', target=language).translate(j)
+            values[i] = f'{data}\n{GoogleTranslator(source="en", target=language).translate(values[i])[0:3].capitalize()}'
     return values
 
 
