@@ -32,9 +32,10 @@ def users_data(message, language):
             f'Пройдите опрос ( Настройки -> Параметры ) чтобы точнее расчитать вашу дневную '
             f'норму питания.\n')
         bot.send_message(message.from_user.id, MESSAGE, reply_markup=menu(menu_status, message, language))
-    MESSAGE = GoogleTranslator(source='auto', target=language).translate(
-        f'Привет!\n\nС возвращением, {message.from_user.first_name}!')
-    bot.send_message(message.from_user.id, MESSAGE, reply_markup=menu(menu_status, message, language))
+    else:
+        MESSAGE = GoogleTranslator(source='auto', target=language).translate(
+            f'Привет!\n\nС возвращением, {message.from_user.first_name}!')
+        bot.send_message(message.from_user.id, MESSAGE, reply_markup=menu(menu_status, message, language))
 
 
 def update_weight(message):
