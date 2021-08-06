@@ -223,10 +223,11 @@ def sorting_food_by_type(user, language):
 
 
 def list_products_eaten_this_day(user, language):
+    lang = languages[language]
     output = ''
-    breakfast = str('ЗАВТРАК:\n\n')
-    lunch = str('ОБЕД:\n\n')
-    dinner = str('УЖИН:\n\n')
+    breakfast = str(f'{lang["breakfast"]}:\n\n')
+    lunch = str(f'{lang["lunch"]}:\n\n')
+    dinner = str(f'{lang["dinner"]}:\n\n')
     today = date.today()
     session = sessionmaker(bind=database_dsn)()
     query = session.query(Consumed, Food).outerjoin(Food, Consumed.product == Food.id).where(
@@ -235,20 +236,17 @@ def list_products_eaten_this_day(user, language):
     for f in query:
         food = session.query(FoodLang).filter((FoodLang.foodid == f.Food.id) & (FoodLang.language == language)).first()
         if f.Consumed.food_type == 'BREAKFAST':
-            breakfast = breakfast + f'{food.title.capitalize()}\n'
+            breakfast = breakfast + f'{food.title.strip().capitalize()}\n'
         elif f.Consumed.food_type == 'LUNCH':
-            lunch = lunch + f'{food.title.capitalize()}\n'
+            lunch = lunch + f'{food.title.strip().capitalize()}\n'
         elif f.Consumed.food_type == 'DINNER':
-            dinner = dinner + f'{food.title.capitalize()}\n'
-    if breakfast != 'ЗАВТРАК:\n\n':
+            dinner = dinner + f'{food.title.strip().capitalize()}\n'
+    if breakfast != f'{lang["breakfast"]}:\n\n':
         output = output + f'{breakfast}\n'
-    if lunch != 'ОБЕД:\n\n':
+    if lunch != f'{lang["lunch"]}:\n\n':
         output = output + f'{lunch}\n'
-    if dinner != 'УЖИН:\n\n':
+    if dinner != f'{lang["dinner"]}:\n\n':
         output = output + f'{dinner}\n'
-    if output:
-        output = GoogleTranslator(source='auto', target=language).translate(output)
-
     return output
 
 
