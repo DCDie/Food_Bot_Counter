@@ -18,6 +18,7 @@ def menu(status, message, language):
     button11 = types.KeyboardButton(text=f"{lang['parameters']} 🔬")
     button12 = types.KeyboardButton(text=f"{lang['woman']} 👩🏼")
     button13 = types.KeyboardButton(text=f"{lang['man']} 👨🏻‍")
+    button22 = types.KeyboardButton(text=f"{lang['help']} ☎‍")
     button14 = types.KeyboardButton(text="50")
     button15 = types.KeyboardButton(text="100")
     button16 = types.KeyboardButton(text="150")
@@ -32,7 +33,7 @@ def menu(status, message, language):
         keyboards.row(button3)
     elif status == 'settings':
         keyboards.row(button10)
-        keyboards.row(button11)
+        keyboards.row(button11, button22)
         keyboards.row(button9)
     elif status == 'parameters':
         session = sessionmaker(bind=database_dsn)()

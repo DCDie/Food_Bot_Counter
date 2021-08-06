@@ -7,7 +7,7 @@ from settings import bot, languages
 from deep_translator import GoogleTranslator
 from views import users_data, update_weight, update_height, update_age, query_add_food_view, add_new_item, \
     query_delete_food_view, sorting_food_by_type, counting_necessary_kcal, microelements_counter, \
-    collecting_diagram_data
+    collecting_diagram_data, help_message
 
 
 @bot.message_handler(commands=['start'])
@@ -23,6 +23,15 @@ def settings_menu(message):
     menu_status = 'settings'
     bot.send_message(message.from_user.id, MESSAGE,
                      reply_markup=menu(menu_status, message, language))
+
+
+@bot.message_handler(regexp='☎')
+def settings_menu(message):
+    language = message.from_user.language_code
+    MESSAGE = GoogleTranslator(source='auto', target=language).translate(
+        'Опишите проблему ( Ваше сообщение будет отправлено в техподдержку ):')
+    sent = bot.send_message(message.from_user.id, MESSAGE)
+    bot.register_next_step_handler(sent, help_message)
 
 
 @bot.message_handler(regexp='🔙')
@@ -77,7 +86,8 @@ def sex_menu(message):
 @bot.message_handler(regexp='👩🏼')
 def sex_menu(message):
     language = message.from_user.language_code
-    MESSAGE = GoogleTranslator(source='auto', target=language).translate('Поздравляю, данные успешно добавленны!\n\nВыбери следующие действие:')
+    MESSAGE = GoogleTranslator(source='auto', target=language).translate(
+        'Поздравляю, данные успешно добавленны!\n\nВыбери следующие действие:')
     session = sessionmaker(bind=database_dsn)()
     session.query(Users).where(Users.user == message.from_user.id).update({Users.sex: 'Женщина'})
     session.commit()
@@ -88,7 +98,8 @@ def sex_menu(message):
 @bot.message_handler(regexp='👨🏻')
 def sex_menu(message):
     language = message.from_user.language_code
-    MESSAGE = GoogleTranslator(source='auto', target=language).translate('Поздравляю, данные успешно добавленны!\n\nВыбери следующие действие:')
+    MESSAGE = GoogleTranslator(source='auto', target=language).translate(
+        'Поздравляю, данные успешно добавленны!\n\nВыбери следующие действие:')
     session = sessionmaker(bind=database_dsn)()
     session.query(Users).where(Users.user == message.from_user.id).update({Users.sex: 'Мужчина'})
     session.commit()
@@ -166,7 +177,8 @@ def all_day_view(message):
     img = draw_big_diagram(kcal, sum_kcal, language)
     bot.send_photo(chat_id=message.from_user.id, photo=img)
     sum_carbohydrates, sum_protein, sum_fat, sum_fiber = microelements_counter(sum_kcal)
-    img = diagram_request_sender(carbohydrate, sum_carbohydrates, protein, sum_protein, fat, sum_fat, fiber, sum_fiber, language)
+    img = diagram_request_sender(carbohydrate, sum_carbohydrates, protein, sum_protein, fat, sum_fat, fiber, sum_fiber,
+                                 language)
     bot.send_photo(chat_id=message.from_user.id, photo=img)
     MESSAGE = GoogleTranslator(source='auto', target=language).translate('Выбери следующие действие:')
     bot.send_message(message.from_user.id, MESSAGE, reply_markup=menu('main', message, language))

@@ -1,6 +1,8 @@
 import os
 import time
+import smtplib
 from datetime import datetime, date, timedelta
+from email.message import EmailMessage
 
 from sqlalchemy import func
 from sqlalchemy.orm import sessionmaker
@@ -9,7 +11,7 @@ from deep_translator import GoogleTranslator
 
 from buttons import menu, add_food, delete_food
 from models import database_dsn, Users, Food, Consumed, FoodLang
-from settings import bot, icon, languages
+from settings import bot, icon, languages, email_password, email
 
 os.environ['TZ'] = 'Europe/Chisinau'
 time.tzset()
@@ -298,3 +300,17 @@ def collecting_diagram_data(call):
         altitude.append(float(f.kcal))
         tick_label.append(f'{f.data.strftime("%d")}\n{f.data.strftime("%a")}')
     return left, altitude, tick_label
+
+
+def help_message(message):
+    text = message.text
+    msg = EmailMessage()
+    msg.set_content(text)
+    msg['Subject'] = f'Bot need help! User: {message.from_user.id}'
+    msg['From'] = email
+    msg['To'] = email
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login(email, email_password)
+    server.sendmail(email, [email], msg.as_string())
+    bot.send_message(message.from_user.id, "Спасибо, мы постараемся помочь!", reply_markup=menu('main', message, message.from_user.language_code))
