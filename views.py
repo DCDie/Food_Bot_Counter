@@ -114,7 +114,7 @@ def query_add_food_view(food_name, language):
         lang = languages['en']
     name = food_name.query.lower().split(':')[-1]
     session = sessionmaker(bind=database_dsn)()
-    foods = session.query(FoodLang).filter((FoodLang.title.contains(name.strip())) & (FoodLang.language == language)).order_by(FoodLang.id).limit(20)
+    foods = session.query(FoodLang).filter(((FoodLang.title.contains(name.strip())) & (FoodLang.language == language)) | (FoodLang.title.contains(name.strip()))).order_by(FoodLang.id).limit(20)
     titles = []
     for i in foods:
         food = session.query(Food).filter(Food.id == i.foodid).first()
@@ -123,7 +123,7 @@ def query_add_food_view(food_name, language):
         )
 
         title = types.InlineQueryResultArticle(
-            id=i.foodid,
+            id=i.id,
             title=i.title.capitalize(),
             description=f'{lang["kcal100"]} {food.energy} {lang["kcal_sg"]}',
             input_message_content=content,
