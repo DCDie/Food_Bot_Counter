@@ -114,20 +114,24 @@ def query_add_food_view(food_name, language):
         lang = languages['en']
     name = food_name.query.lower().split(':')[-1]
     session = sessionmaker(bind=database_dsn)()
-    foods = session.query(FoodLang).filter(((FoodLang.title.contains(name.strip())) & (FoodLang.language == language)) | (FoodLang.title.contains(name.strip()))).order_by(FoodLang.id).limit(20)
+    foods = session.query(FoodLang, Food).join(Food).where(
+        ((FoodLang.title.contains(name.strip())) & (FoodLang.language == language) & (
+                    (Food.added_by == 'admin') | (Food.added_by == f'{food_name.from_user.id}'))) | (
+            FoodLang.title.contains(name.strip())) & (
+                    (Food.added_by == 'admin') | (Food.added_by == f'{food_name.from_user.id}'))).order_by(
+        FoodLang.id).limit(20)
     titles = []
     for i in foods:
-        food = session.query(Food).filter(Food.id == i.foodid).first()
         content = types.InputTextMessageContent(
-            message_text=f'{i.title.capitalize()} - {food.energy} {lang["kcal_sg"]}/100 {lang["g"]}',
+            message_text=f'{i.FoodLang.title.capitalize()} - {i.Food.energy} {lang["kcal_sg"]}/100 {lang["g"]}',
         )
 
         title = types.InlineQueryResultArticle(
-            id=i.id,
-            title=i.title.capitalize(),
-            description=f'{lang["kcal100"]} {food.energy} {lang["kcal_sg"]}',
+            id=i.FoodLang.id,
+            title=i.FoodLang.title.capitalize(),
+            description=f'{lang["kcal100"]} {i.Food.energy} {lang["kcal_sg"]}',
             input_message_content=content,
-            reply_markup=add_food(i.foodid, food_name.from_user.language_code),
+            reply_markup=add_food(i.FoodLang.foodid, food_name.from_user.language_code),
             thumb_url=icon,
             thumb_width=48,
             thumb_height=48

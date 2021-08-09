@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Float, MetaData, Date, Column, Integer, String, ForeignKey
+from sqlalchemy import create_engine, Float, MetaData, Date, Column, Integer, String, ForeignKey, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 
 from settings import user, password, host, port, database
@@ -17,8 +17,16 @@ class Food(Base):
     energy = Column(Float)
     protein = Column(Float)
     carbohydrate = Column(Float)
-    fat = Column(Float)
     fiber = Column(Float)
+    fat = Column(Float)
+    food_group = Column(Float)
+    alcohol = Column(Float)
+    water = Column(Float)
+    ash = Column(Float)
+    trusted = Column(Boolean)
+    added_by = Column(String)
+
+
 
 
 class Users(Base):
