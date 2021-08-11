@@ -119,7 +119,7 @@ def query_add_food_view(food_name, language):
                     (Food.added_by == 'admin') | (Food.added_by == f'{food_name.from_user.id}'))) | (
             FoodLang.title.contains(name.strip())) & (
                     (Food.added_by == 'admin') | (Food.added_by == f'{food_name.from_user.id}'))).order_by(
-        FoodLang.id).limit(20)
+        FoodLang.foodid).limit(20)
     titles = []
     for i in foods:
         content = types.InputTextMessageContent(
