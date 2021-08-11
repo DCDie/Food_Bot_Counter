@@ -140,7 +140,7 @@ def item_view(message):
     try:
         lang = languages[language]
     except KeyError:
-        lang = languages['en']
+        lang = languages['ru']
     food_id = message.data.split('-')[-1]
     session = sessionmaker(bind=database_dsn)()
     food = session.query(FoodLang).where((FoodLang.foodid == food_id) & (FoodLang.language == language))

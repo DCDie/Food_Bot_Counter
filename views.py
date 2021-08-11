@@ -111,7 +111,7 @@ def query_add_food_view(food_name, language):
     try:
         lang = languages[language]
     except KeyError:
-        lang = languages['en']
+        lang = languages['ru']
     name = food_name.query.lower().split(':')[-1]
     session = sessionmaker(bind=database_dsn)()
     foods = session.query(FoodLang, Food).join(Food).where(
@@ -174,7 +174,7 @@ def query_delete_food_view(food_name, language):
     try:
         lang = languages[language]
     except KeyError:
-        lang = languages['en']
+        lang = languages['ru']
     today = date.today()
     session = sessionmaker(bind=database_dsn)()
     calorii = session.query(Consumed, Food).outerjoin(Food, Consumed.product == Food.id).where(

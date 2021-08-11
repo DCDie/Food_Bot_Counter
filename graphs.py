@@ -11,7 +11,7 @@ def week_statistics_graph(user_id, high, latitude, values, plt, language):
     try:
         lang = languages[language]
     except KeyError:
-        lang = languages['en']
+        lang = languages['ru']
     kcal = counting_necessary_kcal(user_id)
     values = rename_days(values, language)
     plt.bar(high, latitude, tick_label=values,
@@ -54,7 +54,7 @@ def diagram_factory(curent, target, name, units, bar, buf, language):
     try:
         lang = languages[language]
     except KeyError:
-        lang = languages['en']
+        lang = languages['ru']
     if target - curent > 0:
         colors = ['#00cc66', '#b3ffd9']
         slices = [curent, target - curent]
@@ -82,7 +82,7 @@ def diagram_request_sender(carbohydrate, sum_carbohydrates, protein, sum_protein
     try:
         lang = languages[language]
     except KeyError:
-        lang = languages['en']
+        lang = languages['ru']
     plt.figure()
     buf = io.BytesIO()
     plt.subplot(2, 2, 1)
@@ -105,7 +105,7 @@ def draw_big_diagram(kcal, sum_kcal, language):
     try:
         lang = languages[language]
     except KeyError:
-        lang = languages['en']
+        lang = languages['ru']
     signification = lang['kcal_sg']
     title = f'{lang["kcal"]} ({sum_kcal: .0f} {signification} )'
     plt.figure()

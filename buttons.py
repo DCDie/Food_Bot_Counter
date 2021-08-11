@@ -7,7 +7,7 @@ def menu(status, message, language):
     try:
         lang = languages[language]
     except KeyError:
-        lang = languages['en']
+        lang = languages['ru']
     keyboards = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button1 = types.KeyboardButton(text=f"{lang['day']} 🧾")
     button2 = types.KeyboardButton(text=f"{lang['week']} 📊")
@@ -64,7 +64,7 @@ def search(language):
     try:
         lang = languages[language]
     except KeyError:
-        lang = languages['en']
+        lang = languages['ru']
     keyboard = types.InlineKeyboardMarkup()
     keyboard.add(types.InlineKeyboardButton(text=f"{lang['search']} 🔎", switch_inline_query_current_chat="add:"))
     return keyboard
@@ -74,7 +74,7 @@ def delete(language):
     try:
         lang = languages[language]
     except KeyError:
-        lang = languages['en']
+        lang = languages['ru']
     keyboard = types.InlineKeyboardMarkup()
     keyboard.add(types.InlineKeyboardButton(text=f"{lang['search']} 🔎", switch_inline_query_current_chat="delete:"))
     return keyboard
@@ -84,7 +84,7 @@ def add_food(food_id, language):
     try:
         lang = languages[language]
     except KeyError:
-        lang = languages['en']
+        lang = languages['ru']
     food = types.InlineKeyboardMarkup()
     food.add(types.InlineKeyboardButton(text=f"{lang['add_weight']} ⚖", callback_data=f"add-food-entry-{food_id}"))
     food.add(types.InlineKeyboardButton(text=f"{lang['another_product']} 🍎", switch_inline_query_current_chat="add:"))
@@ -95,7 +95,7 @@ def delete_food(food_id, language):
     try:
         lang = languages[language]
     except KeyError:
-        lang = languages['en']
+        lang = languages['ru']
     food = types.InlineKeyboardMarkup()
     food.add(types.InlineKeyboardButton(text=f"{lang['delete']} 🗑", callback_data=f"delete-food-entry-{food_id}"))
     food.add(types.InlineKeyboardButton(text=f"{lang['another_product']} 🗑", switch_inline_query_current_chat="delete:"))
